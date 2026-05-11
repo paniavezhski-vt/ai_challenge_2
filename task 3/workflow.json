@@ -1,0 +1,928 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "b50a6c88-f0fe-4d50-a7a2-bbd55ba033f0",
+      "name": "Telegram Trigger",
+      "webhookId": "916fc767-615b-4df8-be7d-00eadd1920ac",
+      "credentials": {
+        "telegramApi": {
+          "id": "kyHxsQvRwcRph8jJ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/learn",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "cc04f561-a188-42da-b1c3-97597a7726fc"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "57aadcfc-81cc-4e43-8546-def251d40cd5",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/quiz",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9b63fe4d-03b0-4c29-811c-f6017a34e1d2",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "34030331-537d-43af-928f-0b8a963417ad",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "ABCDE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "aeb766f5-8731-466c-91a4-17e9047c7045",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "^\\d+$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "28b5725b-f413-4b28-af73-2c072a9daba9",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.message.text.split(' ')[1] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        400,
+        -112
+      ],
+      "id": "49c1aca4-32b3-4b50-8996-63b462db49e9",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "jsCode": "const html = $json.data || $json.body || '';\n\nconst titleMatch = html.match(new RegExp('<title[^>]*>(.*?)</title>', 'i'));\n\nconst title = titleMatch\n  ? titleMatch[1].replace(/\\s+/g, ' ').trim()\n  : 'Untitled material';\n\nlet content = html;\n\ncontent = content.replace(new RegExp('<script[\\\\s\\\\S]*?</script>', 'gi'), '');\ncontent = content.replace(new RegExp('<style[\\\\s\\\\S]*?</style>', 'gi'), '');\ncontent = content.replace(new RegExp('<svg[\\\\s\\\\S]*?</svg>', 'gi'), '');\ncontent = content.replace(new RegExp('<[^>]+>', 'g'), ' ');\ncontent = content.replaceAll('&nbsp;', ' ');\ncontent = content.replaceAll('&amp;', '&');\ncontent = content.replaceAll('&lt;', '<');\ncontent = content.replaceAll('&gt;', '>');\ncontent = content.replace(/\\s+/g, ' ');\ncontent = content.trim().slice(0, 12000);\n\nreturn [\n  {\n    json: {\n      chatId: $('Telegram Trigger').item.json.message.chat.id,\n      userId: $('Telegram Trigger').item.json.message.from.id,\n      url: $('Telegram Trigger').item.json.message.text.split(' ')[1],\n      title,\n      content\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        -112
+      ],
+      "id": "6dafed0b-3a4a-400a-ac64-b8541d0022e5",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are Teacher, an AI learning assistant.\n\nAnalyze the learning material and return a structured summary.\n\nReturn ONLY valid JSON:\n{\n  \"title\": \"string\",\n  \"difficulty\": \"beginner | intermediate | advanced\",\n  \"summary\": \"short summary\",\n  \"keyPoints\": [\"point 1\", \"point 2\", \"point 3\", \"point 4\", \"point 5\"],\n  \"mainConcepts\": [\"concept 1\", \"concept 2\", \"concept 3\"]\n}\n\nRules:\n- keyPoints must contain 5 to 7 items\n- use only provided content\n- do not invent facts\n- no markdown\n- valid JSON only\n\nMaterial title:\n{{ $json.title }}\n\nMaterial URL:\n{{ $json.url }}\n\nMaterial content:\n{{ $json.content }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        736,
+        -112
+      ],
+      "id": "59d77475-373e-4e75-b762-09ff88850636",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Code in JavaScript1').item.json.chatId }}",
+        "text": "={{\n`\n📚 ${$json.title}\n\n🎯 Difficulty:\n${$json.difficulty}\n\n📝 Summary:\n${$json.summary}\n\n🔑 Key Points:\n${JSON.parse($json.keyPoints).map((p, i) => `${i + 1}. ${p}`).join('\\n')}\n\n🧠 Main Concepts:\n${JSON.parse($json.mainConcepts).join(', ')}\n`\n}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -112
+      ],
+      "id": "841d29d3-e19d-48c1-b975-2f4d56a78889",
+      "name": "Send a text message",
+      "webhookId": "443e35d3-7e5a-48a7-9f4b-7b84dcbfe1d1",
+      "credentials": {
+        "telegramApi": {
+          "id": "kyHxsQvRwcRph8jJ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "SoZBSm6NTkaLUBeN",
+          "mode": "list",
+          "cachedResultName": "materials",
+          "cachedResultUrl": "/projects/01XowOE7QUkllvMz/datatables/SoZBSm6NTkaLUBeN"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "userId": "={{ $json.userId }}",
+            "url": "={{ $json.url }}",
+            "title": "={{ $json.title }}",
+            "difficulty": "={{ $json.difficulty }}",
+            "summary": "={{ $json.summary }}",
+            "keyPoints": "={{ $json.keyPoints }}",
+            "mainConcepts": "={{ $json.mainConcepts }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "difficulty",
+              "displayName": "difficulty",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "keyPoints",
+              "displayName": "keyPoints",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "mainConcepts",
+              "displayName": "mainConcepts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1184,
+        -112
+      ],
+      "id": "daebb946-fb7c-4293-8b8e-749faf33427a",
+      "name": "Insert row"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = JSON.parse($json.output[0].content[0].text);\n\nreturn [\n  {\n    json: {\n      chatId: $('Code in JavaScript').item.json.chatId,\n      userId: $('Code in JavaScript').item.json.userId,\n      url: $('Code in JavaScript').item.json.url,\n      title: data.title,\n      difficulty: data.difficulty,\n      summary: data.summary,\n      keyPoints: JSON.stringify(data.keyPoints),\n      mainConcepts: JSON.stringify(data.mainConcepts),\n      createdAt: new Date().toISOString()\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        -112
+      ],
+      "id": "146b82f9-b83a-4564-a36b-d4a68adab952",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "SoZBSm6NTkaLUBeN",
+          "mode": "list",
+          "cachedResultName": "materials",
+          "cachedResultUrl": "/projects/01XowOE7QUkllvMz/datatables/SoZBSm6NTkaLUBeN"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $('Telegram Trigger').item.json.message.from.id }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        64
+      ],
+      "id": "a63e91f3-ec1b-4a28-8ff8-f1624c0bc736",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\n\nif (rows.length === 0) {\n  return [\n    {\n      json: {\n        message: 'You have no saved learning materials yet.'\n      }\n    }\n  ];\n}\n\nconst topics = rows.map((row, index) => {\n  return `${index + 1}. ${row.json.title}`;\n});\n\nreturn [\n  {\n    json: {\n      message:\n`📚 Your saved topics:\n\n${topics.join('\\n')}\n\nReply with a number to start a quiz.`\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        64
+      ],
+      "id": "e6d6a091-d4a9-470a-b85f-1f66cc269c34",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        736,
+        64
+      ],
+      "id": "fa655d38-b2dd-47c5-bbfe-80d35fac822f",
+      "name": "Send a text message1",
+      "webhookId": "5f06ae7e-4c72-4233-bb9c-9f36bc7fef4d",
+      "credentials": {
+        "telegramApi": {
+          "id": "kyHxsQvRwcRph8jJ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "SoZBSm6NTkaLUBeN",
+          "mode": "list",
+          "cachedResultName": "materials",
+          "cachedResultUrl": "/projects/01XowOE7QUkllvMz/datatables/SoZBSm6NTkaLUBeN"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $('Telegram Trigger').item.json.message.from.id }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        480
+      ],
+      "id": "7f54399e-49f9-49f4-9574-d30dcbf55aeb",
+      "name": "Get row(s)1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\n\nconst selectedNumber = parseInt($('Telegram Trigger').item.json.message.text, 10);\nconst selectedIndex = selectedNumber - 1;\n\nif (selectedIndex < 0 || selectedIndex >= rows.length) {\n  return [\n    {\n      json: {\n        message: 'Invalid topic number. Send /quiz and choose a valid number.'\n      }\n    }\n  ];\n}\n\nreturn [\n  {\n    json: rows[selectedIndex].json\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        480
+      ],
+      "id": "2b1a5b4b-a7c7-4e67-a63b-27eb82b0fba7",
+      "name": "Code in JavaScript3"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=You are Examiner, an AI quiz generator.\n\nCreate exactly 5 multiple-choice questions based ONLY on the provided learning material.\n\nReturn ONLY valid JSON:\n{\n  \"questions\": [\n    {\n      \"id\": \"Q1\",\n      \"question\": \"string\",\n      \"options\": {\n        \"A\": \"string\",\n        \"B\": \"string\",\n        \"C\": \"string\",\n        \"D\": \"string\"\n      },\n      \"correctAnswer\": \"A\",\n      \"explanation\": \"string\"\n    }\n  ]\n}\n\nRules:\n- exactly 5 questions\n- use only provided material\n- one correct answer only\n- no markdown\n- valid JSON only\n\nMaterial title:\n{{ $json.title }}\n\nSummary:\n{{ $json.summary }}\n\nKey points:\n{{ $json.keyPoints }}\n\nMain concepts:\n{{ $json.mainConcepts }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        736,
+        480
+      ],
+      "id": "53543b2c-3415-408c-ad8b-8132382168df",
+      "name": "Message a model1",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{\n(() => {\n  const questions = JSON.parse($json.questions);\n\n  return `🧪 Quiz: ${$json.currentMaterialTitle}\n\n${questions.map((q, index) => {\n    return `${index + 1}. ${q.question}\n\nA) ${q.options.A}\nB) ${q.options.B}\nC) ${q.options.C}\nD) ${q.options.D}`;\n  }).join('\\n\\n')}\n\nReply with your answers like this:\nABCDE`;\n})()\n}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1360,
+        480
+      ],
+      "id": "08e225e2-c0a4-46a8-8663-c846e06b6c98",
+      "name": "Send a text message2",
+      "webhookId": "2297cd19-3c03-4765-8ac6-7546f9390cb7",
+      "credentials": {
+        "telegramApi": {
+          "id": "kyHxsQvRwcRph8jJ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = JSON.parse($json.output[0].content[0].text);\n\nreturn [\n  {\n    json: {\n      chatId: $('Telegram Trigger').item.json.message.chat.id,\n      userId: $('Telegram Trigger').item.json.message.from.id,\n      questions: JSON.stringify(data.questions),\n      correctAnswers: data.questions.map(q => q.correctAnswer).join(''),\n      explanations: JSON.stringify(\n        data.questions.map(q => ({\n          id: q.id,\n          correctAnswer: q.correctAnswer,\n          explanation: q.explanation\n        }))\n      ),\n      currentMaterialTitle: $('Code in JavaScript3').item.json.title,\n      createdAt: new Date().toISOString()\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1040,
+        480
+      ],
+      "id": "a02e918f-285a-4ecf-8674-beebedd309cd",
+      "name": "Code in JavaScript4"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "buUpOFOFLmqEybly",
+          "mode": "list",
+          "cachedResultName": "quiz_sessions",
+          "cachedResultUrl": "/projects/01XowOE7QUkllvMz/datatables/buUpOFOFLmqEybly"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "userId": "={{ $json.userId }}",
+            "questions": "={{ $json.questions }}",
+            "correctAnswers": "={{ $json.correctAnswers }}",
+            "explanations": "={{ $json.explanations }}",
+            "currentMaterialTitle": "={{ $json.createdAt }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "userId",
+              "displayName": "userId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "questions",
+              "displayName": "questions",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "correctAnswers",
+              "displayName": "correctAnswers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "explanations",
+              "displayName": "explanations",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "currentMaterialTitle",
+              "displayName": "currentMaterialTitle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        480
+      ],
+      "id": "d4646ac9-0ef9-4314-bc8e-bcb6dbe8665d",
+      "name": "Insert row1"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "buUpOFOFLmqEybly",
+          "mode": "list",
+          "cachedResultName": "quiz_sessions",
+          "cachedResultUrl": "/projects/01XowOE7QUkllvMz/datatables/buUpOFOFLmqEybly"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "userId",
+              "keyValue": "={{ $('Telegram Trigger').item.json.message.from.id }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        320
+      ],
+      "id": "2164946b-0895-436b-8c36-b6a01014681b",
+      "name": "Get row(s)2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\n\nif (rows.length === 0) {\n  return [\n    {\n      json: {\n        chatId: $('Telegram Trigger').item.json.message.chat.id,\n        message: 'No active quiz found. Send /quiz first.'\n      }\n    }\n  ];\n}\n\nconst latest = rows[rows.length - 1].json;\n\nconst userAnswers = $('Telegram Trigger').item.json.message.text\n  .toUpperCase()\n  .trim();\n\nconst correctAnswers = latest.correctAnswers;\nconst explanations = JSON.parse(latest.explanations);\n\nlet correctCount = 0;\nconst feedback = [];\n\nfor (let i = 0; i < correctAnswers.length; i++) {\n  const userAnswer = userAnswers[i];\n  const correctAnswer = correctAnswers[i];\n\n  if (userAnswer === correctAnswer) {\n    correctCount++;\n    feedback.push(`${i + 1}. ✅ Correct`);\n  } else {\n    const exp = explanations[i];\n    feedback.push(\n      `${i + 1}. ❌ Your answer: ${userAnswer}. Correct: ${correctAnswer}\\nExplanation: ${exp.explanation}`\n    );\n  }\n}\n\nconst score = Math.round((correctCount / correctAnswers.length) * 100);\n\nreturn [\n  {\n    json: {\n      chatId: $('Telegram Trigger').item.json.message.chat.id,\n      message: `✅ Quiz completed!\n\nScore: ${score}%\n\n${feedback.join('\\n\\n')}`\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        320
+      ],
+      "id": "f1b7f028-eeae-4ef3-8b26-53ea892212ef",
+      "name": "Code in JavaScript5"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        736,
+        320
+      ],
+      "id": "26f4985e-69f9-475a-9f4d-a65fa15c2ce7",
+      "name": "Send a text message3",
+      "webhookId": "deef4f69-3d1a-49ee-93ef-62e8f04bb81d",
+      "credentials": {
+        "telegramApi": {
+          "id": "kyHxsQvRwcRph8jJ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "\n`👋 Welcome to AI Learning Bot\n\nCommands:\n\n📚 /learn <url>\nLearn from an article or documentation page.\n\n🧠 /quiz\nStart a quiz from your saved topics.\n\nExample:\n/learn https://react.dev/reference/react/useState`",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        192
+      ],
+      "id": "c486ae1c-1efc-43c7-924f-1f724cc0099a",
+      "name": "Send a text message4",
+      "webhookId": "dab86b2b-4c3b-4782-90b5-90defc81fe67",
+      "credentials": {
+        "telegramApi": {
+          "id": "kyHxsQvRwcRph8jJ",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s)2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Insert row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript3": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript4": {
+      "main": [
+        [
+          {
+            "node": "Insert row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert row1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)2": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript5": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a1897f79-65f7-4d87-8963-bf3efd4b6717",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "29ba6fc204d0186f167fecdb4722519e137e8ea7f9bf54f58a371ad6a06d9590"
+  },
+  "id": "OzoVt9OFKRvX7kZK",
+  "tags": []
+}
