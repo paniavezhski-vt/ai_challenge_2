@@ -3,17 +3,12 @@
   "nodes": [
     {
       "parameters": {
-        "updates": [
-          "message"
-        ],
+        "updates": ["message"],
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
-      "position": [
-        0,
-        0
-      ],
+      "position": [0, 0],
       "id": "b50a6c88-f0fe-4d50-a7a2-bbd55ba033f0",
       "name": "Telegram Trigger",
       "webhookId": "916fc767-615b-4df8-be7d-00eadd1920ac",
@@ -105,11 +100,11 @@
                 "conditions": [
                   {
                     "id": "34030331-537d-43af-928f-0b8a963417ad",
-                    "leftValue": "={{ $json.message.text }}",
-                    "rightValue": "ABCDE",
+                    "leftValue": "={{ $json.message.text.trim().toUpperCase() }}",
+                    "rightValue": "^[ABCD]{5}$",
                     "operator": {
                       "type": "string",
-                      "operation": "contains"
+                      "operation": "regex"
                     }
                   }
                 ],
@@ -144,10 +139,7 @@
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
-      "position": [
-        208,
-        0
-      ],
+      "position": [208, 0],
       "id": "28b5725b-f413-4b28-af73-2c072a9daba9",
       "name": "Switch"
     },
@@ -158,10 +150,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [
-        400,
-        -112
-      ],
+      "position": [400, -112],
       "id": "49c1aca4-32b3-4b50-8996-63b462db49e9",
       "name": "HTTP Request"
     },
@@ -171,10 +160,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        576,
-        -112
-      ],
+      "position": [576, -112],
       "id": "6dafed0b-3a4a-400a-ac64-b8541d0022e5",
       "name": "Code in JavaScript"
     },
@@ -198,10 +184,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.3,
-      "position": [
-        736,
-        -112
-      ],
+      "position": [736, -112],
       "id": "59d77475-373e-4e75-b762-09ff88850636",
       "name": "Message a model",
       "credentials": {
@@ -220,10 +203,7 @@
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [
-        1344,
-        -112
-      ],
+      "position": [1344, -112],
       "id": "841d29d3-e19d-48c1-b975-2f4d56a78889",
       "name": "Send a text message",
       "webhookId": "443e35d3-7e5a-48a7-9f4b-7b84dcbfe1d1",
@@ -334,10 +314,7 @@
       },
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
-      "position": [
-        1184,
-        -112
-      ],
+      "position": [1184, -112],
       "id": "daebb946-fb7c-4293-8b8e-749faf33427a",
       "name": "Insert row"
     },
@@ -347,10 +324,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        1024,
-        -112
-      ],
+      "position": [1024, -112],
       "id": "146b82f9-b83a-4564-a36b-d4a68adab952",
       "name": "Code in JavaScript1"
     },
@@ -376,10 +350,7 @@
       },
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
-      "position": [
-        400,
-        64
-      ],
+      "position": [400, 64],
       "id": "a63e91f3-ec1b-4a28-8ff8-f1624c0bc736",
       "name": "Get row(s)"
     },
@@ -389,10 +360,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        576,
-        64
-      ],
+      "position": [576, 64],
       "id": "e6d6a091-d4a9-470a-b85f-1f66cc269c34",
       "name": "Code in JavaScript2"
     },
@@ -404,10 +372,7 @@
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [
-        736,
-        64
-      ],
+      "position": [736, 64],
       "id": "fa655d38-b2dd-47c5-bbfe-80d35fac822f",
       "name": "Send a text message1",
       "webhookId": "5f06ae7e-4c72-4233-bb9c-9f36bc7fef4d",
@@ -440,10 +405,7 @@
       },
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
-      "position": [
-        400,
-        480
-      ],
+      "position": [400, 480],
       "id": "7f54399e-49f9-49f4-9574-d30dcbf55aeb",
       "name": "Get row(s)1"
     },
@@ -453,10 +415,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        576,
-        480
-      ],
+      "position": [576, 480],
       "id": "2b1a5b4b-a7c7-4e67-a63b-27eb82b0fba7",
       "name": "Code in JavaScript3"
     },
@@ -480,10 +439,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.openAi",
       "typeVersion": 2.3,
-      "position": [
-        736,
-        480
-      ],
+      "position": [736, 480],
       "id": "53543b2c-3415-408c-ad8b-8132382168df",
       "name": "Message a model1",
       "credentials": {
@@ -502,10 +458,7 @@
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [
-        1360,
-        480
-      ],
+      "position": [1360, 480],
       "id": "08e225e2-c0a4-46a8-8663-c846e06b6c98",
       "name": "Send a text message2",
       "webhookId": "2297cd19-3c03-4765-8ac6-7546f9390cb7",
@@ -522,10 +475,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        1040,
-        480
-      ],
+      "position": [1040, 480],
       "id": "a02e918f-285a-4ecf-8674-beebedd309cd",
       "name": "Code in JavaScript4"
     },
@@ -607,10 +557,7 @@
       },
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
-      "position": [
-        1200,
-        480
-      ],
+      "position": [1200, 480],
       "id": "d4646ac9-0ef9-4314-bc8e-bcb6dbe8665d",
       "name": "Insert row1"
     },
@@ -636,10 +583,7 @@
       },
       "type": "n8n-nodes-base.dataTable",
       "typeVersion": 1.1,
-      "position": [
-        400,
-        320
-      ],
+      "position": [400, 320],
       "id": "2164946b-0895-436b-8c36-b6a01014681b",
       "name": "Get row(s)2"
     },
@@ -649,10 +593,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [
-        576,
-        320
-      ],
+      "position": [576, 320],
       "id": "f1b7f028-eeae-4ef3-8b26-53ea892212ef",
       "name": "Code in JavaScript5"
     },
@@ -664,10 +605,7 @@
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [
-        736,
-        320
-      ],
+      "position": [736, 320],
       "id": "26f4985e-69f9-475a-9f4d-a65fa15c2ce7",
       "name": "Send a text message3",
       "webhookId": "deef4f69-3d1a-49ee-93ef-62e8f04bb81d",
@@ -686,10 +624,7 @@
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [
-        400,
-        192
-      ],
+      "position": [400, 192],
       "id": "c486ae1c-1efc-43c7-924f-1f724cc0099a",
       "name": "Send a text message4",
       "webhookId": "dab86b2b-4c3b-4782-90b5-90defc81fe67",
@@ -787,9 +722,7 @@
       ]
     },
     "Send a text message": {
-      "main": [
-        []
-      ]
+      "main": [[]]
     },
     "Code in JavaScript1": {
       "main": [
@@ -918,7 +851,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "a1897f79-65f7-4d87-8963-bf3efd4b6717",
+  "versionId": "215b0453-6c5e-4b36-ac88-25384b202b8b",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "29ba6fc204d0186f167fecdb4722519e137e8ea7f9bf54f58a371ad6a06d9590"
